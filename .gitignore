@@ -1,0 +1,49 @@
+# .NET / C#
+bin/
+obj/
+*.user
+*.suo
+*.pdb
+*.dll
+*.exe
+*.cache
+*.log
+*.vs/
+*.vscode/
+*.csproj.user
+*.csproj.nuget.dgspec.json
+*.csproj.nuget.g.props
+.nuget/
+
+debug/
+release/
+TestResults/
+coverage/
+*.snl
+*.sdf
+
+global.json
+packages/
+project.lock.json
+
+# Next.js / Node.js
+node_modules/
+.next/
+out/
+*.env*
+.env
+
+# Logs
+yarn-debug.log
+yarn-error.log
+npm-debug.log
+
+# OS Specific
+.DS_Store
+Thumbs.db
+
+# Editor Settings
+.idea/
+.vscode/
+*.swp
+*.swo
