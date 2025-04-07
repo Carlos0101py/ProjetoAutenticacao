@@ -29,5 +29,15 @@ namespace AuthAPI.Repositories
             return await _dbContext.User.FirstOrDefaultAsync(u => u.Email == email);
         }
 
+        public async Task<User> GetById(Guid id)
+        {
+            return await _dbContext.User.FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task Delete(User user)
+        {
+            _dbContext.User.Remove(user);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }
