@@ -81,6 +81,7 @@ namespace AuthAPI.Service
         {
             Session session = new() { };
             ResponseDTO response = new();
+            UserLoginDTO userLogin = new();
 
             try
             {
@@ -120,11 +121,21 @@ namespace AuthAPI.Service
 
                 await _sessionRepository.Add(session);
 
+                userLogin = new()
+                {
+                    Id = user.Id,
+                    Email = user.Email,
+                    UserName = user.UserName,
+                    Session = user.Session,
+                    CreatedAt = user.CreatedAt,
+                    UpdatedAt = user.UpdatedAt
+                };
+
                 return response = new()
                 {
                     Message = "Login feito com sucesso!",
                     Success = true,
-                    Date = session
+                    Date = userLogin,
                 };
             }
             catch (Exception ex)
