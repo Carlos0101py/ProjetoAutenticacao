@@ -7,7 +7,6 @@ namespace AuthAPI.Controllers
 {
     [ApiController]
     [Route("Api/v1")]
-    [AllowAnonymous]
     public class UserController : Controller
     {
         private readonly UserService _userService;
@@ -22,7 +21,38 @@ namespace AuthAPI.Controllers
         {
             try
             {
-                var response = await _userService.Login(userDTO);
+                var response = await _userService.SingUp(userDTO);
+
+                return response.Success ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(ex.Message);
+            }
+        }
+
+        [HttpPost("login-account")]
+        public async Task<ActionResult> LoginAccount([FromBody] UserDTO userDTO)
+        {
+            try
+            {
+                var response = await _userService.SingIn(userDTO);
+
+                return response.Success ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException(ex.Message);
+            }
+        }
+
+        [HttpDelete("delete-user/{id}")]
+        [Authorize]
+        public async Task<ActionResult> GetUserById(Guid id)
+        {
+            try
+            {
+                var response = await _userService.DeleteUser(id);
 
                 return response.Success ? Ok(response) : BadRequest(response);
             }
