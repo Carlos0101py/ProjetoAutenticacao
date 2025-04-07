@@ -23,7 +23,6 @@ namespace AuthAPI.Models
             }
         }
 
-        [JsonIgnore]
         public Session Session {get; set;}
 
 

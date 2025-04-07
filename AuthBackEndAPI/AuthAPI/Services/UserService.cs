@@ -16,11 +16,10 @@ namespace AuthAPI.Service
         }
 
 
-        public async Task<ResponseDTO> Login(UserDTO userDTO)
+        public async Task<ResponseDTO> SingUp(UserDTO userDTO)
         {
             ResponseDTO response = new() { };
             User newUser = new() { };
-            Session session = new() { };
 
             try
             {
@@ -32,13 +31,13 @@ namespace AuthAPI.Service
                     {
                         Message = "Informações inseridas estão não são valídas!",
                         Success = false,
-                        Date = user
+                        Date = null
                     };
 
                     return response;
                 }
 
-                if(userDTO.Password != userDTO.RePassword)
+                if (userDTO.Password != userDTO.RePassword)
                 {
                     response = new()
                     {
@@ -58,21 +57,112 @@ namespace AuthAPI.Service
                 };
 
                 await _userRepository.Add(newUser);
-                var token = TokenService.GenerateToken(newUser);
+
+                return response = new()
+                {
+                    Message = "Usuário criado com sucesso!",
+                    Success = true,
+                    Date = newUser
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    Success = false,
+                    Message = $"Ocorreu um erro interno: {ex.Message}",
+                    Date = null
+                };
+            }
+        }
+
+        public async Task<ResponseDTO> SingIn(UserDTO userDTO)
+        {
+            Session session = new() { };
+            ResponseDTO response = new();
+
+            try
+            {
+                var user = await _userRepository.GetByEmail(userDTO.Email);
+
+                if (user == null)
+                {
+                    response = new()
+                    {
+                        Message = "Usuario não encontrado!",
+                        Success = false,
+                        Date = null
+                    };
+
+                    return response;
+                }
+
+                if (userDTO.Password != userDTO.RePassword)
+                {
+                    response = new()
+                    {
+                        Message = "Senhas inseridas não coincidem!",
+                        Success = false,
+                        Date = user
+                    };
+
+                    return response;
+                }
+
+                var token = TokenService.GenerateToken(user);
 
                 session = new()
                 {
-                    Token = token,
-                    UserId = newUser.Id
+                    UserId = user.Id,
+                    Token = token
                 };
 
                 await _sessionRepository.Add(session);
-                
+
                 return response = new()
                 {
-                    Message = "Usuario Cadastrado com sucesso!",
+                    Message = "Login feito com sucesso!",
                     Success = true,
-                    Date = newUser
+                    Date = session
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResponseDTO
+                {
+                    Success = false,
+                    Message = $"Ocorreu um erro interno: {ex.Message}",
+                    Date = null
+                };
+            }
+        }
+
+        public async Task<ResponseDTO> DeleteUser(Guid id)
+        {
+            ResponseDTO response = new();
+
+            try
+            {
+                var user = await _userRepository.GetById(id);
+
+                if (user == null)
+                {
+                    return new ResponseDTO
+                    {
+                        Success = false,
+                        Message = "Usuario não encontrado!",
+                        Date = null
+                    };
+                }
+
+                await _userRepository.Delete(user);
+
+                return new ResponseDTO
+                {
+                    Success = true,
+                    Message = "Usuario deletado com sucesso!",
+                    Date = user
                 };
             }
             catch (Exception ex)
