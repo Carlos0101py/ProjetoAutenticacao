@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace AuthAPI.Models
 {
@@ -7,8 +8,10 @@ namespace AuthAPI.Models
         [Required]
         public string Token {get; set;}
         [Required]
+        [JsonIgnore]
         public Guid UserId { get; set; }
-        
+
+        [JsonIgnore]        
         public User User {get; set;}
         
 
