@@ -1,5 +1,7 @@
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using AuthAPI.DataBase;
+using AuthAPI.Models;
 using AuthAPI.Repositories;
 using AuthAPI.Service;
 using dotenv.net;
@@ -19,49 +21,35 @@ namespace AuthAPI.Config
 
             try
             {
-                builder.Services.AddDbContext<AppDbContext>(options =>
-                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+                ConfigureDataBase(builder.Services, connectionString);
+                ConfigureRepositories(builder.Services);
+                CORSConfig.ConfigureCORS(builder.Services);
+                JWTConfig.ConfigureJWT(builder.Services, SecretKey);
 
                 builder.Services.AddControllers();
 
-                builder.Services.AddScoped<UserService, UserService>();
-                builder.Services.AddScoped<UserRepository, UserRepository>();
-                builder.Services.AddScoped<SessionRepository, SessionRepository>();
-
-
-                // Configuração de CORS
-                builder.Services.AddCors(options =>
-                {
-                    options.AddDefaultPolicy(policy =>
-                        policy.AllowAnyOrigin()
-                            .AllowAnyMethod()
-                            .AllowAnyHeader());
-                });
-
-                // Configuração da autenticação JWT
-                var key = Encoding.ASCII.GetBytes(SecretKey);
-                builder.Services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options =>
-                {
-                    options.RequireHttpsMetadata = false;
-                    options.SaveToken = true;
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(key),
-                        ValidateIssuer = false,
-                        ValidateAudience = false
-                    };
-                });
+                // Add services to the container.
+                // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+                builder.Services.AddOpenApi();
             }
             catch (Exception ex)
             {
                 throw new Exception($"Erro ao iniciar as dependencias: {ex.Message}", ex);
             }
+        }
+
+        public static void ConfigureDataBase(IServiceCollection services, string connectionString)
+        {
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+        }
+
+        public static void ConfigureRepositories(IServiceCollection services)
+        {
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<ISessionRepository, SessionRepository>();
+            services.AddScoped<UserAuthService>();
+            services.AddScoped<UserProfileService>();
         }
     }
 }
