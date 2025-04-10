@@ -4,40 +4,44 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AuthAPI.Repositories
 {
-    public class UserRepository
+    public class UserRepository : RepositoryBase<User>, IUserRepository
     {
-        private readonly AppDbContext _dbContext;
-
-        public UserRepository(AppDbContext dbContext)
+        public UserRepository(AppDbContext context) : base(context)
         {
-            _dbContext = dbContext;
         }
 
-        public async Task Add(User user)
+        public override async Task Add(User user)
         {
-            _dbContext.User.Add(user);
-            await _dbContext.SaveChangesAsync();
+            _context.User.Add(user);
+            await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<User>> GetAll()
+        public override async Task Delete(User user)
         {
-            return await _dbContext.User.ToListAsync();
+            _context.User.Remove(user);
+            await _context.SaveChangesAsync();
+
+        }
+
+        public override async Task<IEnumerable<User>> GetAll()
+        {
+            return await _context.User.ToListAsync();
+        }
+
+        public override async Task<User> GetById(Guid id)
+        {
+            return await _context.User.FirstOrDefaultAsync(u => u.Id == id);
         }
 
         public async Task<User> GetByEmail(string email)
         {
-            return await _dbContext.User.FirstOrDefaultAsync(u => u.Email == email);
+            return await _context.User.FirstOrDefaultAsync(u => u.Email == email);
         }
 
-        public async Task<User> GetById(Guid id)
+        public async Task<User> GetByUserName(string userName)
         {
-            return await _dbContext.User.FirstOrDefaultAsync(u => u.Id == id);
+            return await _context.User.FirstOrDefaultAsync(u => u.UserName == userName);
         }
 
-        public async Task Delete(User user)
-        {
-            _dbContext.User.Remove(user);
-            await _dbContext.SaveChangesAsync();
-        }
     }
 }

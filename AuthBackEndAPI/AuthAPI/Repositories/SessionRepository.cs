@@ -3,20 +3,31 @@ using AuthAPI.Models;
 
 namespace AuthAPI.Repositories
 {
-    public class SessionRepository
+    public class SessionRepository : RepositoryBase<Session>, ISessionRepository
     {
-        private readonly AppDbContext _dbContext;
-
-        public SessionRepository(AppDbContext dbContext)
+        public SessionRepository(AppDbContext context) : base(context)
         {
-            _dbContext = dbContext;
         }
 
-
-        public async Task Add(Session session)
+        public override async Task Add(Session session)
         {
-            _dbContext.Session.Add(session);
-            await _dbContext.SaveChangesAsync();
+            _context.Session.Add(session);
+            await _context.SaveChangesAsync();
+        }
+
+        public override async Task Delete(Session entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override async Task<IEnumerable<Session>> GetAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override async Task<Session> GetById(Guid id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
