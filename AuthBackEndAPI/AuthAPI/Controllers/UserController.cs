@@ -9,11 +9,13 @@ namespace AuthAPI.Controllers
     [Route("Api/v1")]
     public class UserController : Controller
     {
-        private readonly UserService _userService;
+        private readonly UserAuthService _userAuthService;
+        private readonly UserProfileService _userProfileService;
 
-        public UserController(UserService userService)
+        public UserController(UserAuthService userAuthService, UserProfileService userProfileService)
         {
-            _userService = userService;
+            _userAuthService = userAuthService;
+            _userProfileService = userProfileService;
         }
 
         [HttpPost("create-account")]
@@ -21,7 +23,7 @@ namespace AuthAPI.Controllers
         {
             try
             {
-                var response = await _userService.SingUp(userDTO);
+                var response = await _userAuthService.SingUp(userDTO);
 
                 return response.Success ? Ok(response) : BadRequest(response);
             }
@@ -36,7 +38,7 @@ namespace AuthAPI.Controllers
         {
             try
             {
-                var response = await _userService.SingIn(userDTO);
+                var response = await _userAuthService.SingIn(userDTO);
 
                 return response.Success ? Ok(response) : BadRequest(response);
             }
@@ -60,7 +62,7 @@ namespace AuthAPI.Controllers
                 }
 
                 var userId = Guid.Parse(tokenUserID);
-                var response = await _userService.DeleteUser(userId);
+                var response = await _userProfileService.DeleteUser(userId);
 
                 return response.Success ? Ok(response) : BadRequest(response);
             }

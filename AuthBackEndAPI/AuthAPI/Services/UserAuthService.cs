@@ -1,15 +1,15 @@
-using AuthAPI.Repositories;
-using AuthAPI.Models;
 using AuthAPI.DTOs;
+using AuthAPI.Models;
+using AuthAPI.Repositories;
 
 namespace AuthAPI.Service
 {
-    public class UserService
+    public class UserAuthService
     {
-        private readonly UserRepository _userRepository;
-        private readonly SessionRepository _sessionRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly ISessionRepository _sessionRepository;
 
-        public UserService(UserRepository userRepository, SessionRepository sessionRepository)
+        public UserAuthService(IUserRepository userRepository, ISessionRepository sessionRepository)
         {
             _userRepository = userRepository;
             _sessionRepository = sessionRepository;
@@ -136,44 +136,6 @@ namespace AuthAPI.Service
                     Message = "Login feito com sucesso!",
                     Success = true,
                     Date = userLogin,
-                };
-            }
-            catch (Exception ex)
-            {
-                return new ResponseDTO
-                {
-                    Success = false,
-                    Message = $"Ocorreu um erro interno: {ex.Message}",
-                    Date = null
-                };
-            }
-        }
-
-        public async Task<ResponseDTO> DeleteUser(Guid id)
-        {
-            ResponseDTO response = new();
-
-            try
-            {
-                var user = await _userRepository.GetById(id);
-
-                if (user == null)
-                {
-                    return new ResponseDTO
-                    {
-                        Success = false,
-                        Message = "Usuario não encontrado!",
-                        Date = null
-                    };
-                }
-
-                await _userRepository.Delete(user);
-
-                return new ResponseDTO
-                {
-                    Success = true,
-                    Message = "Usuario deletado com sucesso!",
-                    Date = user
                 };
             }
             catch (Exception ex)
