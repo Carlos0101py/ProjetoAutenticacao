@@ -27,7 +27,7 @@ namespace AuthAPI.Controllers
             }
             catch (Exception ex)
             {
-                throw new ArgumentException(ex.Message);
+                return StatusCode(500, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
 
@@ -42,23 +42,31 @@ namespace AuthAPI.Controllers
             }
             catch (Exception ex)
             {
-                throw new ArgumentException(ex.Message);
+                return StatusCode(500, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
 
-        [HttpDelete("delete-user/{id}")]
+        [HttpDelete("delete-user")]
         [Authorize]
-        public async Task<ActionResult> GetUserById(Guid id)
+        public async Task<ActionResult> GetUserById()
         {
             try
             {
-                var response = await _userService.DeleteUser(id);
+                var tokenUserID = User.FindFirst("UserId")?.Value;
+
+                if (tokenUserID == null)
+                {
+                    return BadRequest("Usuario sem autorização");
+                }
+
+                var userId = Guid.Parse(tokenUserID);
+                var response = await _userService.DeleteUser(userId);
 
                 return response.Success ? Ok(response) : BadRequest(response);
             }
             catch (Exception ex)
             {
-                throw new ArgumentException(ex.Message);
+                return StatusCode(500, $"Ocorreu um erro interno: {ex.Message}");
             }
         }
     }
