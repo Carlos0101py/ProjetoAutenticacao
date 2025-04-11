@@ -1,5 +1,6 @@
 using AuthAPI.DataBase;
 using AuthAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AuthAPI.Repositories
 {
@@ -23,7 +24,7 @@ namespace AuthAPI.Repositories
 
         public override async Task<IEnumerable<Session>> GetAll()
         {
-            throw new NotImplementedException();
+            return await _context.Session.ToListAsync();
         }
 
         public override async Task<Session> GetById(Guid id)
