@@ -9,12 +9,14 @@ namespace AuthAPI.Controllers
     [Route("Api/v1")]
     public class UserController : Controller
     {
-        private readonly UserAuthService _userAuthService;
         private readonly UserProfileService _userProfileService;
+        private readonly UserSingInService _userSingInService;
+        private readonly UserSingUpService _userSingUpService;
 
-        public UserController(UserAuthService userAuthService, UserProfileService userProfileService)
+        public UserController(UserSingInService userSingInService, UserSingUpService userSingUpService, UserProfileService userProfileService)
         {
-            _userAuthService = userAuthService;
+            _userSingInService = userSingInService;
+            _userSingUpService = userSingUpService;
             _userProfileService = userProfileService;
         }
 
@@ -23,7 +25,7 @@ namespace AuthAPI.Controllers
         {
             try
             {
-                var response = await _userAuthService.SingUp(userDTO);
+                var response = await _userSingUpService.SingUp(userDTO);
 
                 return response.Success ? Ok(response) : BadRequest(response);
             }
@@ -38,7 +40,7 @@ namespace AuthAPI.Controllers
         {
             try
             {
-                var response = await _userAuthService.SingIn(userDTO);
+                var response = await _userSingInService.SingIn(userDTO);
 
                 return response.Success ? Ok(response) : BadRequest(response);
             }
