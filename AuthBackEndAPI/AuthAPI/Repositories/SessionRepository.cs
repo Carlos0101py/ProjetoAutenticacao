@@ -29,7 +29,7 @@ namespace AuthAPI.Repositories
 
         public override async Task<Session> GetById(Guid id)
         {
-            throw new NotImplementedException();
+            return await _context.Session.FirstOrDefaultAsync(u => u.Id == id);
         }
     }
 }
