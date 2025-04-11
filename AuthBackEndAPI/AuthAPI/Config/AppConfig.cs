@@ -1,13 +1,11 @@
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using AuthAPI.DataBase;
+using AuthAPI.Helper;
+using AuthAPI.Helper.Builders;
 using AuthAPI.Models;
 using AuthAPI.Repositories;
 using AuthAPI.Service;
 using dotenv.net;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace AuthAPI.Config
 {
@@ -48,6 +46,8 @@ namespace AuthAPI.Config
         {
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ISessionRepository, SessionRepository>();
+            services.AddScoped<IResponseBuilder<User>, AuthResponseBuilder>();
+            services.AddScoped<IResponseBuilder<UserLoginDTO>, LoginResponseBuilder>();
             services.AddScoped<UserAuthService>();
             services.AddScoped<UserProfileService>();
         }
