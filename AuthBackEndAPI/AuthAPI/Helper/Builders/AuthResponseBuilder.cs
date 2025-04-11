@@ -44,7 +44,7 @@ namespace AuthAPI.Helper.Builders
             ResponseDTO response = new()
             {
                 Message = message,
-                Success = false,
+                Success = true,
                 Date = date
             };
 
