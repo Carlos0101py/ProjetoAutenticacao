@@ -15,9 +15,10 @@ namespace AuthAPI.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public override async Task Delete(Session entity)
+        public override async Task Delete(Session session)
         {
-            throw new NotImplementedException();
+            _context.Session.Remove(session);
+            await _context.SaveChangesAsync();
         }
 
         public override async Task<IEnumerable<Session>> GetAll()
