@@ -48,8 +48,9 @@ namespace AuthAPI.Config
             services.AddScoped<ISessionRepository, SessionRepository>();
             services.AddScoped<IResponseBuilder<User>, AuthResponseBuilder>();
             services.AddScoped<IResponseBuilder<UserLoginDTO>, LoginResponseBuilder>();
-            services.AddScoped<UserAuthService>();
             services.AddScoped<UserProfileService>();
+            services.AddScoped<UserSingInService>();
+            services.AddScoped<UserSingUpService>();
         }
     }
 }
