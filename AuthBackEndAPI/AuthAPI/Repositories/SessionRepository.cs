@@ -1,5 +1,6 @@
 using AuthAPI.DataBase;
 using AuthAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace AuthAPI.Repositories
 {
@@ -15,19 +16,20 @@ namespace AuthAPI.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public override async Task Delete(Session entity)
+        public override async Task Delete(Session session)
         {
-            throw new NotImplementedException();
+            _context.Session.Remove(session);
+            await _context.SaveChangesAsync();
         }
 
         public override async Task<IEnumerable<Session>> GetAll()
         {
-            throw new NotImplementedException();
+            return await _context.Session.ToListAsync();
         }
 
         public override async Task<Session> GetById(Guid id)
         {
-            throw new NotImplementedException();
+            return await _context.Session.FirstOrDefaultAsync(u => u.Id == id);
         }
     }
 }
