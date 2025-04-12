@@ -9,6 +9,7 @@ namespace AuthAPI.Repositories
         Task<User> GetById(Guid id);
         Task<User> GetByEmail(string email);
         Task Delete(User user);
+        Task Change();
     }
 
 }
