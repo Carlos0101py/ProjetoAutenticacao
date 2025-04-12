@@ -43,7 +43,7 @@ namespace AuthAPI.Helper
             ResponseDTO response = new()
             {
                 Message = message,
-                Success = false,
+                Success = true,
                 Date = date
             };
 
