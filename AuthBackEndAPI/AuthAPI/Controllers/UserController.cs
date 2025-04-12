@@ -1,4 +1,5 @@
 using AuthAPI.DTOs;
+using AuthAPI.Models;
 using AuthAPI.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +10,14 @@ namespace AuthAPI.Controllers
     [Route("Api/v1")]
     public class UserController : Controller
     {
-        private readonly UserAuthService _userAuthService;
         private readonly UserProfileService _userProfileService;
+        private readonly UserSingInService _userSingInService;
+        private readonly UserSingUpService _userSingUpService;
 
-        public UserController(UserAuthService userAuthService, UserProfileService userProfileService)
+        public UserController(UserSingInService userSingInService, UserSingUpService userSingUpService, UserProfileService userProfileService)
         {
-            _userAuthService = userAuthService;
+            _userSingInService = userSingInService;
+            _userSingUpService = userSingUpService;
             _userProfileService = userProfileService;
         }
 
@@ -23,7 +26,7 @@ namespace AuthAPI.Controllers
         {
             try
             {
-                var response = await _userAuthService.SingUp(userDTO);
+                var response = await _userSingUpService.SingUp(userDTO);
 
                 return response.Success ? Ok(response) : BadRequest(response);
             }
@@ -38,7 +41,7 @@ namespace AuthAPI.Controllers
         {
             try
             {
-                var response = await _userAuthService.SingIn(userDTO);
+                var response = await _userSingInService.SingIn(userDTO);
 
                 return response.Success ? Ok(response) : BadRequest(response);
             }
@@ -50,7 +53,7 @@ namespace AuthAPI.Controllers
 
         [HttpDelete("delete-user")]
         [Authorize]
-        public async Task<ActionResult> GetUserById()
+        public async Task<ActionResult> DeleteAccount()
         {
             try
             {
@@ -63,6 +66,30 @@ namespace AuthAPI.Controllers
 
                 var userId = Guid.Parse(tokenUserID);
                 var response = await _userProfileService.DeleteUser(userId);
+
+                return response.Success ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Ocorreu um erro interno: {ex.Message}");
+            }
+        }
+
+        [HttpPut("change-information")]
+        [Authorize]
+        public async Task<ActionResult> ChangeUserInformation([FromBody] ChengeAccountDTO chengeAccountDTO)
+        {
+            try
+            {
+                var tokenUserID = User.FindFirst("UserId")?.Value;
+
+                if(tokenUserID == null)
+                {
+                    return BadRequest("Usuario sem autorização");
+                }
+
+                var userId = Guid.Parse(tokenUserID);
+                var response = await _userProfileService.ChangeUserInformation(userId ,chengeAccountDTO);
 
                 return response.Success ? Ok(response) : BadRequest(response);
             }

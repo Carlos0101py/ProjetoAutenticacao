@@ -43,5 +43,9 @@ namespace AuthAPI.Repositories
             return await _context.User.FirstOrDefaultAsync(u => u.UserName == userName);
         }
 
+        public async Task Change()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }
